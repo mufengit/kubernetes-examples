@@ -1,0 +1,58 @@
+{
+  "kind": "ReplicationController",
+  "apiVersion": "v1",
+  "metadata": {
+    "name": "storm-worker-controller",
+    "labels": {
+      "name": "storm-worker"
+    }
+  },
+  "spec": {
+    "replicas": 3,
+    "selector": {
+      "name": "storm-worker"
+    },
+    "template": {
+      "metadata": {
+        "labels": {
+          "name": "storm-worker",
+          "uses": "nimbus"
+        }
+      },
+      "spec": {
+        "containers": [
+          {
+            "name": "storm-worker",
+            "image": "typhoon1986/storm-worker",
+            "command": ["/start.sh", "--storm.zookeeper.servers", "172.24.2.35,172.24.2.36,172.24.2.37",
+                    "--storm.zookeeper.port", "2181",
+                    "--storm.zookeeper.root", "/k8s_storm"],
+            "ports": [
+              {
+                "hostPort": 6700,
+                "containerPort": 6700
+              },
+              {
+                "hostPort": 6701,
+                "containerPort": 6701
+              },
+              {
+                "hostPort": 6702,
+                "containerPort": 6702
+              },
+              {
+                "hostPort": 6703,
+                "containerPort": 6703
+              }
+            ],
+            "resources": {
+              "limits": {
+                "cpu": "200m"
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}
