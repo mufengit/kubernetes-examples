@@ -8,22 +8,20 @@
 
 ### 部署流程
 
-* 发布**Nginx Ingress Controller**
-
-发布ingress controller的 rc
+* 发布ingress controller的rc
 
 ```
 kubectl create -f rc-ingress-controller.yaml
 ```
 
-发布default-http-backend，用于处理404的请求
+* 发布default-http-backend，用于处理404的请求
 
 ```
 kubectl create -f rc-default-backend.yaml
 kubectl expose rc default-http-backend --port=80 --target-port=8080 --name=default-http-backend
 ```
 
-* 发布web服务
+* 发布一个web服务
 这个web服务会返回一个```Hello World```的字符串。
 
 ```
