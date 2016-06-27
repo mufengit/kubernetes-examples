@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: hellos
+  labels:
+    name: hellos
+spec:
+  selector:
+    component: hello
+  ports:
+  - port: 8080
+    targetPort: 8080
+    protocol: TCP
+    name: hello
+
