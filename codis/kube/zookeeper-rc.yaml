@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: codis-zookeeper
+  labels:
+    component: codis-zookeeper
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        component: codis-zookeeper
+    spec:
+      imagePullSecrets:
+      - name: bfdreg
+      containers:
+      - name: codis-zookeeper
+        image: jplock/zookeeper
+        volumeMounts:
+        - mountPath: /data
+          name: storage
+      volumes:
+      - name: storage
+        emptyDir: {}
+

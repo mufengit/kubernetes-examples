@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: codis-server-2
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: codis-server-2
+        service: codis-server-2
+    spec:
+      containers:
+        - name: codis-server-2
+          image: niexiaohu/codis-server
+          ports:
+            - containerPort: 6900
+          volumeMounts:
+            - mountPath: /opt/codis/serverconf/data
+              name: data
+      volumes:
+        - emptyDir: {}
+          name: data

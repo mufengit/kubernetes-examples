@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: codis-zookeeper
+  labels:
+    component: codis-zookeeper
+spec:
+  selector:
+    component: codis-zookeeper
+  ports:
+  - name: userport
+    port: 2181
+    protocol: TCP
