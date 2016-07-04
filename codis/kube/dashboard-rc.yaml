@@ -15,7 +15,7 @@ spec:
           image: niexiaohu/codis-dashboard
           env:
             - name: ZOOKEEPER
-              value: "10.1.91.4"
+              value: "10.3.0.216"
             - name: PRODUCT
               value: "bfdcodis"
           ports:

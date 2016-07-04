@@ -11,11 +11,11 @@ spec:
       labels:
         component: codis-zookeeper
     spec:
-      imagePullSecrets:
-      - name: bfdreg
       containers:
       - name: codis-zookeeper
         image: jplock/zookeeper
+        ports:
+          - containerPort: 2181
         volumeMounts:
         - mountPath: /data
           name: storage

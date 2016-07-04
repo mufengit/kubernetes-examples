@@ -19,13 +19,14 @@
 ### 部署 Codis Dashboard
 
 ```
-kubectl get ep
-NAME              ENDPOINTS          AGE
-codis-zookeeper   10.1.91.3:2181     5h
-kubernetes        172.17.8.101:443   5d
+kubectl get svc
+NAME              CLUSTER-IP   EXTERNAL-IP   PORT(S)    AGE
+codis-zookeeper   10.3.0.216   <none>        2181/TCP   3m
+kubernetes        10.3.0.1     <none>        443/TCP    12d
 ```
 
-修改 dashboard-svc.yaml 里面 ```- name: ZOOKEEPER``` , value:为: ``` "10.1.91.3" ```
+修改 dashboard-rc.yaml 里面 ```- name: ZOOKEEPER``` , value:为: ``` "10.3.0.216" ，PRODUCT 项目名称```
+使用nodePort 为 30007提供Dashboard 访问端口。
 
 ```
 kubectl create -f dashboard-rc.yaml
@@ -35,8 +36,8 @@ kubectl create -f dashboard-svc.yaml
 ```
 kubectl get ep
 NAME              ENDPOINTS          AGE
-codis-dashboard   10.1.4.2:18087     5m
-codis-zookeeper   10.1.91.3:2181     9h
+codis-dashboard   10.1.91.3:18087    1h
+codis-zookeeper   10.1.91.2:2181     2h
 kubernetes        172.17.8.101:443   5d
 ```
 初始化slots,进入 codis-bashboard 容器，执行初始化操作；
@@ -64,10 +65,10 @@ kubectl create -f codisserver-4-svc.yaml
 ```
 [root@controller codis]# kubectl get svc
 NAME              CLUSTER-IP   EXTERNAL-IP   PORT(S)     AGE
-codis-server-1    10.3.0.249   <none>        6900/TCP    16m
-codis-server-2    10.3.0.29    <none>        6900/TCP    4m
-codis-server-3    10.3.0.220   <none>        6900/TCP    3m
-codis-server-4    10.3.0.133   <none>        6900/TCP    2m
+codis-server-1    10.3.0.249   <none>        6900/TCP              6d
+codis-server-2    10.3.0.29    <none>        6900/TCP              6d
+codis-server-3    10.3.0.220   <none>        6900/TCP              6d
+codis-server-4    10.3.0.133   <none>        6900/TCP              6d
 ```
 - 创建ReplicationControllers
 ```
@@ -78,20 +79,20 @@ kubectl create -f codisserver-4-rc.yaml
 ```
 ```
 [root@controller codis]# kubectl get ep
-NAME              ENDPOINTS          AGE
-codis-server-1    10.1.4.3:6900      2h
-codis-server-2    10.1.91.2:6900     2h
-codis-server-3    10.1.4.4:6900      2h
-codis-server-4    10.1.91.5:6900     2h
+NAME              ENDPOINTS                         AGE
+codis-server-1    10.1.4.2:6900                     6d
+codis-server-2    10.1.4.6:6900                     6d
+codis-server-3    10.1.4.3:6900                     6d
+codis-server-4    10.1.4.5:6900                     6d
 ```
 ### 添加 codis-server group
 - 进入codis-dashboard容器
 （将codis-server实例添加到codis集群中，每个Group 作为一个server服务组存在, 一组允许一个 master, 一个或多个slave。）
 ```
-$CODIS_HOME/bin/codis-config -c $CODIS_HOME/codisconf/config.ini server add 1 10.1.4.3:6900 master
-$CODIS_HOME/bin/codis-config -c $CODIS_HOME/codisconf/config.ini server add 1 10.1.91.2:6900 slave
-$CODIS_HOME/bin/codis-config -c $CODIS_HOME/codisconf/config.ini server add 2 10.1.4.4:6900 master
-$CODIS_HOME/bin/codis-config -c $CODIS_HOME/codisconf/config.ini server add 2 10.1.91.5:6900 slave
+$CODIS_HOME/bin/codis-config -c $CODIS_HOME/codisconf/config.ini server add 1 10.1.4.2:6900 master
+$CODIS_HOME/bin/codis-config -c $CODIS_HOME/codisconf/config.ini server add 1 10.1.4.6:6900 slave
+$CODIS_HOME/bin/codis-config -c $CODIS_HOME/codisconf/config.ini server add 2 10.1.4.3:6900 master
+$CODIS_HOME/bin/codis-config -c $CODIS_HOME/codisconf/config.ini server add 2 10.1.4.5:6900 slave
 ```
 给server group分配slot,Codis 采用 Pre-sharding 的技术来实现数据的分片, 默认分成 1024 个 slots (0-1023)
 ```
@@ -100,39 +101,51 @@ $CODIS_HOME/bin/codis-config -c $CODIS_HOME/codisconf/config.ini slot range-set 
 ```
 ### 部署 codis-proxy
 
-修改codis-proxy-rc.yaml  DASHBOARD  ZOOKEEPER pod ip 地址；
+修改codis-proxy-rc.yaml 中的 DASHBOARD  ZOOKEEPER 只为 CLUSTER-IP 地址；PRODUCT 项目名同上面一致。
 ```
-codis-proxy-svc.yaml 
-codis-proxy-rc.yaml 
+[root@controller codis]# kubectl get svc
+NAME              CLUSTER-IP   EXTERNAL-IP   PORT(S)     AGE
+codis-dashboard   10.3.0.124   nodes         18087/TCP   2h
+codis-server-1    10.3.0.249   <none>        6900/TCP    6d
+codis-server-2    10.3.0.29    <none>        6900/TCP    6d
+codis-server-3    10.3.0.220   <none>        6900/TCP    6d
+codis-server-4    10.3.0.133   <none>        6900/TCP    6d
+codis-zookeeper   10.3.0.216   <none>        2181/TCP    3h
+kubernetes        10.3.0.1     <none>        443/TCP     12d
 
-[root@controller codis]# kubectl get ep
-NAME              ENDPOINTS                       AGE
-codis-dashboard   10.1.4.2:18087                  22h
-codis-proxy       10.1.4.5:19000,10.1.4.5:11000   17h
-codis-server-1    10.1.4.3:6900                   1d
-codis-server-2    10.1.91.2:6900                  1d
-codis-server-3    10.1.4.4:6900                   1d
-codis-server-4    10.1.91.5:6900                  1d
-codis-zookeeper   10.1.91.4:2181                  2d
-kubernetes        172.17.8.101:443                7d
+kubectl create -f codis-proxy-svc.yaml 
+kubectl create -f codis-proxy-rc.yaml 
+
+[root@controller codis]# kubectl get svc
+NAME              CLUSTER-IP   EXTERNAL-IP   PORT(S)               AGE
+codis-dashboard   10.3.0.124   nodes         18087/TCP             2h
+codis-proxy       10.3.0.208   <none>        19000/TCP,11000/TCP   3m
+codis-server-1    10.3.0.249   <none>        6900/TCP              6d
+codis-server-2    10.3.0.29    <none>        6900/TCP              6d
+codis-server-3    10.3.0.220   <none>        6900/TCP              6d
+codis-server-4    10.3.0.133   <none>        6900/TCP              6d
+codis-zookeeper   10.3.0.216   <none>        2181/TCP              3h
+kubernetes        10.3.0.1     <none>        443/TCP               12d
 ```
-使用 redis-cli 连接codis-proxy 的 ip和端口测试：
+使用 redis-cli 连接codis-proxy 的  CLUSTER-IP和端口测试,连续写入两次。
 ```
-redis-cli -h 10.1.4.5 -p 19000
+redis-cli -h 10.3.0.208 -p 19000
 10.1.4.5:19000> set  /foo bar
+OK
+10.1.4.5:19000> set  /foo1 bar1
 OK
 ```
 连接 group_1 master:
 ```
-./redis-cli -h 10.1.4.3 -p 6900 
+./redis-cli -h 10.3.0.249 -p 6900 
 10.1.4.3:6900> get /foo
 "bar"
 ```
-连接 group_1 slave:
+连接 group_2 master:
 ```
-./redis-cli -h 10.1.91.2 -p 6900
-10.1.4.3:6900> get /foo
-"bar"
+./redis-cli -h 10.3.0.220 -p 6900
+10.1.4.3:6900> get /foo1
+"bar1"
 ```
 以上部署过程顺序和步骤集合人工去操作完成，有好的方法改进再更新。
 

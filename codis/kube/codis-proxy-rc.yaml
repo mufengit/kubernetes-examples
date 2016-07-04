@@ -15,11 +15,11 @@ spec:
           image: niexiaohu/codis-proxy
           env:
             - name: ZOOKEEPER
-              value: "10.1.91.4"
+              value: "10.3.0.216"
             - name: PRODUCT
               value: "bfdcodis"
             - name: DASHBOARD
-              value: "10.1.4.2"
+              value: "10.3.0.124"
             - name: PROXYID
               value: "proxy_01"
           ports:

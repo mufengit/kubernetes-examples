@@ -5,8 +5,10 @@ metadata:
   labels:
     service: codis-dashboard
 spec:
+  type: NodePort
   ports:
-    - name: httpctl
-      port: 18087
+    - port: 18087
+      targetPort: 18087
+      nodePort: 30007
   selector:
     name: codis-dashboard
