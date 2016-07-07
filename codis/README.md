@@ -78,21 +78,22 @@ kubectl create -f codisserver-3-rc.yaml
 kubectl create -f codisserver-4-rc.yaml 
 ```
 ```
-[root@controller codis]# kubectl get ep
-NAME              ENDPOINTS                         AGE
-codis-server-1    10.1.4.2:6900                     6d
-codis-server-2    10.1.4.6:6900                     6d
-codis-server-3    10.1.4.3:6900                     6d
-codis-server-4    10.1.4.5:6900                     6d
+[root@controller codis]# kubectl get svc
+NAME              CLUSTER-IP   EXTERNAL-IP   PORT(S)               AGE
+codis-server-1    10.3.0.249   <none>        6900/TCP              9d
+codis-server-2    10.3.0.29    <none>        6900/TCP              9d
+codis-server-3    10.3.0.220   <none>        6900/TCP              9d
+codis-server-4    10.3.0.133   <none>        6900/TCP              9d
+codis-zookeeper   10.3.0.216   <none>        2181/TCP              3d
 ```
 ### 添加 codis-server group
-- 进入codis-dashboard容器
+- 进入codis-dashboard容器 添加 codisserver的Service地址 
 （将codis-server实例添加到codis集群中，每个Group 作为一个server服务组存在, 一组允许一个 master, 一个或多个slave。）
 ```
-$CODIS_HOME/bin/codis-config -c $CODIS_HOME/codisconf/config.ini server add 1 10.1.4.2:6900 master
-$CODIS_HOME/bin/codis-config -c $CODIS_HOME/codisconf/config.ini server add 1 10.1.4.6:6900 slave
-$CODIS_HOME/bin/codis-config -c $CODIS_HOME/codisconf/config.ini server add 2 10.1.4.3:6900 master
-$CODIS_HOME/bin/codis-config -c $CODIS_HOME/codisconf/config.ini server add 2 10.1.4.5:6900 slave
+$CODIS_HOME/bin/codis-config -c $CODIS_HOME/codisconf/config.ini server add 1 10.3.0.249:6900 master
+$CODIS_HOME/bin/codis-config -c $CODIS_HOME/codisconf/config.ini server add 1 10.3.0.29:6900 slave
+$CODIS_HOME/bin/codis-config -c $CODIS_HOME/codisconf/config.ini server add 2 10.3.0.220:6900 master
+$CODIS_HOME/bin/codis-config -c $CODIS_HOME/codisconf/config.ini server add 2 10.3.0.133:6900 slave
 ```
 给server group分配slot,Codis 采用 Pre-sharding 的技术来实现数据的分片, 默认分成 1024 个 slots (0-1023)
 ```
