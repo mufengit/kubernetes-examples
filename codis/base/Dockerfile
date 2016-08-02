@@ -15,9 +15,9 @@ RUN apt-get install -y net-tools
 RUN apt-get install -y git
 
 
-RUN curl -LO "https://storage.googleapis.com/golang/go1.4.2.linux-amd64.tar.gz" \
- && tar xzvf go1.4.2.linux-amd64.tar.gz -C /usr/local/ \
- && rm -f go1.4.2.linux-amd64.tar.gz \
+RUN curl -LO "https://storage.googleapis.com/golang/go1.6.3.linux-amd64.tar.gz" \
+ && tar xzvf go1.6.3.linux-amd64.tar.gz -C /usr/local/ \
+ && rm -f go1.6.3.linux-amd64.tar.gz \
  
 RUN go get -u -d github.com/CodisLabs/codis
 RUN cp /opt/codis/bin/godep /opt/go/bin/godep
