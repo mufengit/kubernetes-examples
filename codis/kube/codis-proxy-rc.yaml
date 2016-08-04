@@ -22,12 +22,14 @@ spec:
               value: "10.3.0.124"
             - name: PROXYID
               value: "proxy_01"
+            - name: CPU
+              value: "2"
           ports:
             - containerPort: 11000
             - containerPort: 19000
           volumeMounts:
-            - mountPath: /opt/codis/proxylog
-              name: proxylog
+            - mountPath: /opt/codis/logs
+              name: log
       volumes:
         - emptyDir: {}
-          name: proxylog
+          name: log

@@ -1,6 +1,5 @@
 FROM niexiaohu/codis
-
-ENV CODIS_HOME /opt/codis
+MAINTAINER xiaohu.nie <xiaohu.nie@baifendian.com>
 
 COPY conf/config.ini $CODIS_HOME/conf/config.ini
 COPY run.sh $CODIS_HOME/run.sh

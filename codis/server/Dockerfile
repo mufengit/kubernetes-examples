@@ -1,11 +1,11 @@
 FROM niexiaohu/codis
+MAINTAINER xiaohu.nie <xiaohu.nie@baifendian.com>
 
 USER root
-ENV CODIS_HOME /opt/codis
 
-COPY conf/server.conf $CODIS_HOME/serverconf/conf/server_6900.conf
+COPY conf/6379.conf $CODIS_HOME/conf/6379.conf
 COPY run.sh $CODIS_HOME/run.sh
 RUN chmod a+x $CODIS_HOME/run.sh
 
-EXPOSE 6900
+EXPOSE 6379
 CMD ["/opt/codis/run.sh"]

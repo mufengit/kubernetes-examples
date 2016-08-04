@@ -16,7 +16,7 @@ spec:
           ports:
             - containerPort: 6900
           volumeMounts:
-            - mountPath: /opt/codis/serverconf/data
+            - mountPath: /opt/codis/data
               name: data
       volumes:
         - emptyDir: {}

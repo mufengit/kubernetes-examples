@@ -42,7 +42,7 @@ kubernetes        172.17.8.101:443   5d
 ```
 初始化slots,进入 codis-bashboard 容器，执行初始化操作；
 ```
-	$CODIS_HOME/bin/codis-config -c $CODIS_HOME/codisconf/config.ini slot init
+	$CODIS_HOME/bin/codis-config -c $CODIS_HOME/conf/config.ini slot init
 ```
 返回以下信息,表示成功；
 ```
@@ -90,15 +90,15 @@ codis-zookeeper   10.3.0.216   <none>        2181/TCP              3d
 - 进入codis-dashboard容器 添加 codisserver的Service地址 
 （将codis-server实例添加到codis集群中，每个Group 作为一个server服务组存在, 一组允许一个 master, 一个或多个slave。）
 ```
-$CODIS_HOME/bin/codis-config -c $CODIS_HOME/codisconf/config.ini server add 1 10.3.0.249:6900 master
-$CODIS_HOME/bin/codis-config -c $CODIS_HOME/codisconf/config.ini server add 1 10.3.0.29:6900 slave
-$CODIS_HOME/bin/codis-config -c $CODIS_HOME/codisconf/config.ini server add 2 10.3.0.220:6900 master
-$CODIS_HOME/bin/codis-config -c $CODIS_HOME/codisconf/config.ini server add 2 10.3.0.133:6900 slave
+$CODIS_HOME/bin/codis-config -c $CODIS_HOME/conf/config.ini server add 1 10.3.0.249:6900 master
+$CODIS_HOME/bin/codis-config -c $CODIS_HOME/conf/config.ini server add 1 10.3.0.29:6900 slave
+$CODIS_HOME/bin/codis-config -c $CODIS_HOME/conf/config.ini server add 2 10.3.0.220:6900 master
+$CODIS_HOME/bin/codis-config -c $CODIS_HOME/conf/config.ini server add 2 10.3.0.133:6900 slave
 ```
 给server group分配slot,Codis 采用 Pre-sharding 的技术来实现数据的分片, 默认分成 1024 个 slots (0-1023)
 ```
-$CODIS_HOME/bin/codis-config -c $CODIS_HOME/codisconf/config.ini slot range-set 0 511 1 online
-$CODIS_HOME/bin/codis-config -c $CODIS_HOME/codisconf/config.ini slot range-set 512 1023 2 online
+$CODIS_HOME/bin/codis-config -c $CODIS_HOME/conf/config.ini slot range-set 0 511 1 online
+$CODIS_HOME/bin/codis-config -c $CODIS_HOME/conf/config.ini slot range-set 512 1023 2 online
 ```
 ### 部署 codis-proxy
 

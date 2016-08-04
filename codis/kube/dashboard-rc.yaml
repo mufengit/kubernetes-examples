@@ -21,8 +21,8 @@ spec:
           ports:
             - containerPort: 18087
           volumeMounts:
-            - mountPath: /opt/codis/codislog
-              name: codislog
+            - mountPath: /opt/codis/logs
+              name: log
       volumes:
         - emptyDir: {}
-          name: codislog
+          name: log
